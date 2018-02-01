@@ -91,6 +91,9 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4Double beamlineLength = 0.9*WorldXYZ; //half length of the beamline
   G4Double startAngle = 0.*deg;           // full cylinder
   G4Double spanningAngle = 360.*deg;      // full cylinder
+  G4double pos_x = 0.0*mm;
+  G4double pos_y = 0.0*mm;
+  G4double pos_z = 0.0*mm;
 
   G4Bool checkOverlaps = true;  
 
@@ -122,7 +125,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 						 0);            // user limits
 
   new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, ?), // translation
+		    G4ThreeVector(0, 0, 0), // translation
 		    logicBeamline,          // logic volume
 		    "Beamline",             // name
 		    logicWorld,             // mother volume
@@ -140,7 +143,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 							  0);                 // user limits
 
   new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, ?), // translation
+		    G4ThreeVector(0, 0, 0), // translation
 		    logicTargetChamber,     // logical volume
 		    "TargetChamber",        // name
 		    logicBeamline,          // mother volume
@@ -156,15 +159,15 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 						       0,                  // field manager
 						       0,                  // sensitive detector
 						       0);                 // user limits
-
-  new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, ?), // translation
-		    logicTargetSael,        // logical volume
-		    "TargetSeal",           // name
-		    logicBeamline,          // mother volume
-		    false,                  // no boolean operator
-		    0,                      // copy number
-		    checkOverlaps);         // check for overlaps
+  pos_z = -1.715*mm;
+  new G4PVPlacement(0,                          // rotation
+		    G4ThreeVector(0, 0, pos_z), // translation
+		    logicTargetSael,            // logical volume
+		    "TargetSeal",               // name
+		    logicBeamline,              // mother volume
+		    false,                      // no boolean operator
+		    0,                          // copy number
+		    checkOverlaps);             // check for overlaps
                                                            
 // Water target H2 18-O
   G4Tubs* solidWaterTarget = new G4Tubs("WaterTarget", innerRadius, targetRadius, targetLength, startAngle, spanningAngle); 
@@ -174,15 +177,15 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 							  0,                  // field manager
 							  0,                  // sensitive detector
 							  0);                 // user limits
-
-  new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, ?), // translation
-		    logicWaterTarget,       // logical volume
-		    "WaterTarget",          // name
-		    logicTargetChamber,     // mother volume
-		    false,                  // no boolean operator
-		    0,                      // copy number
-		    checkOverlaps);         // check for overlaps
+  pos_z = -0.25*mm;
+  new G4PVPlacement(0,                          // rotation
+		    G4ThreeVector(0, 0, pos_z), // translation
+		    logicWaterTarget,           // logical volume
+		    "WaterTarget",              // name
+		    logicTargetChamber,         // mother volume
+		    false,                      // no boolean operator
+		    0,                          // copy number
+		    checkOverlaps);             // check for overlaps
 
   // Scoring volume water target
   fscoringVolume = logicWaterTarget;
