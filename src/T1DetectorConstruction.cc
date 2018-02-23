@@ -20,15 +20,15 @@
 #include "G4NistManager.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4LogicalVolyme.hh"
+#include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
-#include "PhysicalConstants.h"
+#include "G4PhysicalConstants.hh"
 
 
 // Constructor
 T1DetectorConstruction::T1DetectorConstruction()
-  :G4UserDetectorConstruction(),
+  :G4VUserDetectorConstruction(),
    fScoringVolume(0)
 { }
 
@@ -45,7 +45,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4String name, symbol;
   G4int nel, natoms;
   //Get nist material
-  G4NistManager* nist = G4NistManager::instance();
+  G4NistManager* nist = G4NistManager::Instance();
 
   G4Material* Ag = nist->FindOrBuildMaterial("G4_Ag");
   G4Material* Ni = nist->FindOrBuildMaterial("G4_Ni");  
@@ -56,7 +56,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   
   // Air
   G4Element* elN = new G4Element("Nitrogen", "N", z = 7., a = 14.00*g/mole);
-  GeElement* elO = new G4Element("Oxygen", "O", z = 16., a = 16.00*g/mole);
+  G4Element* elO = new G4Element("Oxygen", "O", z = 16., a = 16.00*g/mole);
   density = 1.290*mg/cm3;
   G4Material* Air = new G4Material(name="Air", density, nel=2);
   Air->AddElement(elN, 0.7);
@@ -75,120 +75,120 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   density = 1.11*g/cm3;
   G4Element* el18O = new G4Element("18-Oxygen", "18-O", z=18., a = 18.0*g/mole); 
   G4Element* elH = new G4Element("Hydrogen", "H", z = 1., a = 1.01*g/mole);
-  G4Material* O18Water = new GMaterial("H2-18O", density, nel = 2);
+  G4Material* O18Water = new G4Material("H2-18O", density, nel = 2);
   O18Water -> AddElement(elH, natoms = 2);
   O18Water -> AddElement(el18O, natoms = 1);
 
   // variables
   G4double worldXYZ = 1.5*m;              // half of the world size
   G4double innerRadius = 0.00*mm;         // tubs inner radius
-  G4Double targetRaduis = 9.50*mm;        // radius of the water target
-  G4Double outerRadius = 10.00*mm;        // outer radius of the target chamber
-  G4Double beamlineRadius = 10.10*mm;     // beamline vacuum radius
-  G4Double targetLength = 1.41*mm;        // half length in Z of the water target (could be calculated here)
-  G4Double chamberLength = 1.66*mm;       // half length in Z of the target chamber 0.5 mm chamber back thickness
-  G4Double nickelfoilLength = 0.025*mm;   // half length in Z of the nickel foil
-  G4Double beamlineLength = 0.9*WorldXYZ; //half length of the beamline
-  G4Double startAngle = 0.*deg;           // full cylinder
-  G4Double spanningAngle = 360.*deg;      // full cylinder
+  G4double targetRadius = 9.50*mm;        // radius of the water target
+  G4double outerRadius = 10.00*mm;        // outer radius of the target chamber
+  G4double beamlineRadius = 10.10*mm;     // beamline vacuum radius
+  G4double targetLength = 1.41*mm;        // half length in Z of the water target (could be calculated here)
+  G4double chamberLength = 1.66*mm;       // half length in Z of the target chamber 0.5 mm chamber back thickness
+  G4double nickelfoilLength = 0.025*mm;   // half length in Z of the nickel foil
+  G4double beamlineLength = 0.9*worldXYZ; //half length of the beamline
+  G4double startAngle = 0.*deg;           // full cylinder
+  G4double spanningAngle = 360.*deg;      // full cylinder
   G4double pos_x = 0.0*mm;
   G4double pos_y = 0.0*mm;
   G4double pos_z = 0.0*mm;
 
-  G4Bool checkOverlaps = true;  
+  G4bool checkOverlaps = true;  
 
   // Air filled world
-  G4box* solidWord = new G4Box("World", worldXYZ, worldXYZ, worldXYZ);
-  G4LogicalWorld* logicWorld = new G4LogicalWorld(solidWorld, // solid 
-						  Air,        // material
-						  "World",    // name
-						  0,          // field manager
-						  0,          // sensitive detector
-						  0);         // user limits
+  G4Box* solidWorld = new G4Box("World", worldXYZ, worldXYZ, worldXYZ);
+  G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, // solid 
+						    Air,        // material
+						    "World",    // name
+						    0,          // field manager
+						    0,          // sensitive detector
+						    0);         // user limits
 
-  G4PhysicalVolume* physicalWorld = new G4PVPlacement(0,               // rotation
-						   G4ThreeVector(), // translation, at (0,0,0)
-						   logicalWorld,    // logical volume
-						   "World",         // name
-						   0,               // mother physical volume
-						   false,           // boolean operator
-						   0,               // copy number
-						   checkOverlaps);  // check for overlaps
+  G4VPhysicalVolume* physicalWorld = new G4PVPlacement(0,                                  // rotation
+						       G4ThreeVector(pos_x, pos_y, pos_z), // translation, at (0,0,0)
+						       logicWorld,                         // logical volume
+						       "World",                            // name
+						       0,                                  // mother physical volume
+						       false,                              // boolean operator
+						       0,                                  // copy number
+						       checkOverlaps);                     // check for overlaps
 
   //Beamline
   G4Tubs* solidBeamline = new G4Tubs("Beamline", innerRadius, beamlineRadius, beamlineLength, startAngle, spanningAngle);
-  G4LogicalWorld* logicBeamline = new G4LogicalWorld(solidBeamline, // solid
-						 G4vacuum,      // material
-						 "Beamline",    // name
-						 0,             // field manager
-						 0,             // sensitive detector
-						 0);            // user limits
+  G4LogicalVolume* logicBeamline = new G4LogicalVolume(solidBeamline,     // solid
+						       G4vacuum,          // material
+						       "Beamline",        // name
+						       0,                 // field manager
+						       0,                 // sensitive detector
+						       0);                // user limits
 
-  new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, 0), // translation
-		    logicBeamline,          // logic volume
-		    "Beamline",             // name
-		    logicWorld,             // mother volume
-		    false,                  // boolean operation
-		    0,                      // copy number
-		    checkOverlaps);         // check for overlaps
+  new G4PVPlacement(0,                                  // rotation
+		    G4ThreeVector(pos_x, pos_y, pos_z), // translation
+		    logicBeamline,                      // logic volume
+		    "Beamline",                         // name
+		    logicWorld,                         // mother volume
+		    false,                              // boolean operation
+		    0,                                  // copy number
+		    checkOverlaps);                     // check for overlaps
   
   // Target chamber a silver cylinder
   G4Tubs* solidTargetChamber = new G4Tubs("TargetChamber", innerRadius, outerRadius, chamberLength, startAngle, spanningAngle); 
-  G4LogicalWorld* logicTargetChamber = new G4LogicalWorld(solidTargetChamber, // solid
-							  Ag,              // material
-							  "TargetChamber",    // name
-							  0,                  // field manager
-							  0,                  // sensitive detector
-							  0);                 // user limits
+  G4LogicalVolume* logicTargetChamber = new G4LogicalVolume(solidTargetChamber, // solid
+							    Ag,                 // material
+							    "TargetChamber",    // name
+							    0,                  // field manager
+							    0,                  // sensitive detector
+							    0);                 // user limits
 
-  new G4PVPlacement(0,                      // rotation
-		    G4ThreeVector(0, 0, 0), // translation
-		    logicTargetChamber,     // logical volume
-		    "TargetChamber",        // name
-		    logicBeamline,          // mother volume
-		    false,                  // no boolean operator
-		    0,                      // copy number
-		    checkOverlaps);         // check for overlaps
+  new G4PVPlacement(0,                                  // rotation
+		    G4ThreeVector(pos_x, pos_y, pos_z), // translation
+		    logicTargetChamber,                 // logical volume
+		    "TargetChamber",                    // name
+		    logicBeamline,                      // mother volume
+		    false,                              // no boolean operator
+		    0,                                  // copy number
+		    checkOverlaps);                     // check for overlaps
                                                            
 // Target chamber seal, nickel
   G4Tubs* solidTargetSeal = new G4Tubs("TargetSeal", innerRadius, outerRadius, nickelfoilLength, startAngle, spanningAngle); 
-  G4LogicalWorld* logicTargetSeal = new G4LogicalWorld(solidTargetSeal,    // solid
-						       Ni,              // material
-						       "TargetSeal",       // name
-						       0,                  // field manager
-						       0,                  // sensitive detector
-						       0);                 // user limits
+  G4LogicalVolume* logicTargetSeal = new G4LogicalVolume(solidTargetSeal,    // solid
+							 Ni,                 // material
+							 "TargetSeal",       // name
+							 0,                  // field manager
+							 0,                  // sensitive detector
+							 0);                 // user limits
   pos_z = -1.715*mm;
-  new G4PVPlacement(0,                          // rotation
-		    G4ThreeVector(0, 0, pos_z), // translation
-		    logicTargetSael,            // logical volume
-		    "TargetSeal",               // name
-		    logicBeamline,              // mother volume
-		    false,                      // no boolean operator
-		    0,                          // copy number
-		    checkOverlaps);             // check for overlaps
+  new G4PVPlacement(0,                                  // rotation
+		    G4ThreeVector(pos_x, pos_y, pos_z), // translation
+		    logicTargetSeal,                    // logical volume
+		    "TargetSeal",                       // name
+		    logicBeamline,                      // mother volume
+		    false,                              // no boolean operator
+		    0,                                  // copy number
+		    checkOverlaps);                     // check for overlaps
                                                            
 // Water target H2 18-O
   G4Tubs* solidWaterTarget = new G4Tubs("WaterTarget", innerRadius, targetRadius, targetLength, startAngle, spanningAngle); 
-  G4LogicalWorld* logicWaterTarget = new G4LogicalWorld(solidWaterTarget,     // solid
-							  O18Water,          // material DEFINE!!
+  G4LogicalVolume* logicWaterTarget = new G4LogicalVolume(solidWaterTarget,   // solid
+							  O18Water,           // material DEFINE!!
 							  "WaterTarget",      // name
 							  0,                  // field manager
 							  0,                  // sensitive detector
 							  0);                 // user limits
   pos_z = -0.25*mm;
-  new G4PVPlacement(0,                          // rotation
-		    G4ThreeVector(0, 0, pos_z), // translation
-		    logicWaterTarget,           // logical volume
-		    "WaterTarget",              // name
-		    logicTargetChamber,         // mother volume
-		    false,                      // no boolean operator
-		    0,                          // copy number
-		    checkOverlaps);             // check for overlaps
+  new G4PVPlacement(0,                                  // rotation
+		    G4ThreeVector(pos_x, pos_y, pos_z), // translation
+		    logicWaterTarget,                   // logical volume
+		    "WaterTarget",                      // name
+		    logicTargetChamber,                 // mother volume
+		    false,                              // no boolean operator
+		    0,                                  // copy number
+		    checkOverlaps);                     // check for overlaps
 
   // Scoring volume water target
-  fscoringVolume = logicWaterTarget;
+  fScoringVolume = logicWaterTarget;
 
-  return physicalWord;
+  return physicalWorld;
 }
