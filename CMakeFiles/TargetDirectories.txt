@@ -1,0 +1,8 @@
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/edit_cache.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/rebuild_cache.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/install/local.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/install/strip.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/T1.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/list_install_components.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/install.dir
+/home/pgranhol/mgc20-geant4/T1-gean4/CMakeFiles/geantT1.dir
