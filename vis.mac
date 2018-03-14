@@ -48,11 +48,11 @@
 # (if too many tracks cause core dump => /tracking/storeTrajectory 0)
 #
 # Draw hits at end of event:
-#/vis/scene/add/hits
+/vis/scene/add/hits
 #
 # To draw only gammas:
-#/vis/filtering/trajectories/create/particleFilter
-#/vis/filtering/trajectories/particleFilter-0/add gamma
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add neutron
 #
 # To invert the above, drawing all particles except gammas,
 # keep the above two lines but also add:
@@ -60,14 +60,18 @@
 #
 # Many other options are available with /vis/modeling and /vis/filtering.
 # For example, to select colour by particle ID:
-#/vis/modeling/trajectories/create/drawByParticleID
-#/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
 # To select or override default colours (note: e+ is blue by default):
-#/vis/modeling/trajectories/list
-#/vis/modeling/trajectories/drawByParticleID-0/set e+ yellow
+/vis/modeling/trajectories/list
+/vis/modeling/trajectories/drawByParticleID-0/set e yellow
+/vis/modeling/trajectories/drawByParticleID-0/set proton blue
+/vis/modeling/trajectories/drawByParticleID-0/set neutron red
+/vis/modeling/trajectories/drawByParticleID-0/set gamma white
+/vis/modeling/trajectories/drawByParticleID-0/set e+ green
 #
 # To superimpose all of the events from a given run:
-/vis/scene/endOfEventAction accumulate
+/vis/scene/endOfEventAction accumulate -1
 #
 # Decorations
 # Name
@@ -85,7 +89,7 @@
 /vis/scene/add/eventID # Drawn at end of event
 /vis/scene/add/date    # Date stamp
 /vis/scene/add/logo2D  # Simple logo
-/vis/scene/add/logo    # 3D logo
+#/vis/scene/add/logo    # 3D logo
 #
 # Frame
 /vis/set/colour red
@@ -104,10 +108,10 @@
 /vis/geometry/set/visibility World 0 false
 # "Envelope" is transparent blue to represent water
 /vis/geometry/set/colour Beamline 0 0 0 1 .3
-/vis/geometry/set/colour TargetChamber 0 0 1 0 .3
-/vis/viewer/set/style surface
+/vis/geometry/set/colour TargetChamber 0 0 0 1 
+#/vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
-/vis/viewer/set/viewpointThetaPhi 120 150
+/vis/viewer/set/viewpointThetaPhi 0 90
 #
 # Re-establish auto refreshing and verbosity:
 /vis/viewer/set/autoRefresh true

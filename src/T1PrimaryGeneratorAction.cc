@@ -18,7 +18,7 @@ T1PrimaryGeneratorAction::T1PrimaryGeneratorAction()  : G4VUserPrimaryGeneratorA
   
   G4String particleName = "proton";
   G4double energy = 17*MeV;
-  G4ThreeVector position = G4ThreeVector(0,0,10);
+  G4ThreeVector position = G4ThreeVector(-1.3*m, 0, -1.27*m); //target at -1.3*m, 0, -1.25
   G4ThreeVector momentumDirection = G4ThreeVector(0,0,1);
 
   // default particle kinematic

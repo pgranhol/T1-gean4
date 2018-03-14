@@ -23,7 +23,6 @@
 
 int main(int argc, char** argv)
 {
-
   // Detect interactive mode (if no arguments) and define UI session
   //
   G4UIExecutive* ui = 0;
@@ -36,6 +35,8 @@ int main(int argc, char** argv)
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif
+
+  G4Random::setTheEngine(new CLHEP::RanecuEngine);
 
   //Mandatory initialization
   //Detector construction

@@ -7,8 +7,9 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ThreeVector.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4ParticleGun.hh"
 
-class G4ParticleGun;
+//class G4ParticleGun;
 class G4Event;
 
 class T1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
@@ -18,7 +19,10 @@ class T1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   ~T1PrimaryGeneratorAction();  
 
 //methods
-   virtual void GeneratePrimaries(G4Event*);
+  virtual void GeneratePrimaries(G4Event*);
+
+  // access particle gun
+  const G4ParticleGun* GetParticleGun() const {return fparticleGun; }
   
  public:
 //data members
