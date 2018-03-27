@@ -18,8 +18,8 @@ T1PrimaryGeneratorAction::T1PrimaryGeneratorAction()  : G4VUserPrimaryGeneratorA
   
   G4String particleName = "proton";
   G4double energy = 17*MeV;
-  G4ThreeVector position = G4ThreeVector(-1.3*m, 0, -1.27*m); //target at -1.3*m, 0, -1.25
-  G4ThreeVector momentumDirection = G4ThreeVector(0,0,1);
+  G4ThreeVector position = G4ThreeVector((-1.3+0.25*tan(30*deg))*m, -0.7*m, -1.60*m); //target at -1.3*m, 0, -1.25
+  G4ThreeVector momentumDirection = G4ThreeVector(1*sin(-30*deg),0,1*cos(30*deg));
 
   // default particle kinematic
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
