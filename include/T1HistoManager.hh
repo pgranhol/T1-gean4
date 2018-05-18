@@ -11,7 +11,7 @@
 //#include "g4xml.hh" To check!!
 
 
-class HistoManager
+class T1HistoManager
 {
   public:
    T1HistoManager();

@@ -4,7 +4,7 @@
 #include "T1Run.hh"
 #include "T1DetectorConstruction.hh"
 #include "T1PrimaryGeneratorAction.hh"
-#include "t!HistoManager.hh"
+#include "T1HistoManager.hh"
 
 #include "G4ProcessTable.hh"
 #include "G4HadronicProcessStore.hh"
@@ -13,14 +13,14 @@
 
 // constructor
 
-T1Run::T1Run(DetectorConstruction* det)
+T1Run::T1Run(T1DetectorConstruction* det)
 : G4Run(),
   fDetector(det), fParticle(0), fEkin(0.),
   fTotalCount(0), fGammaCount(0),
   fSumTrack(0.), fSumTrack2(0.),
   fTargetXXX(false)
 {
-  for (G4int i=0; i<3; i++) { fPbalance[i] = 0. ; } //What? 
+  for (G4int i=0; i<3; i++) { fPbalance[i] = 0. ; }  
   for (G4int i=0; i<3; i++) { fNbGamma[i] = 0 ; }
 }
 // Destructor
@@ -29,23 +29,23 @@ T1Run::~T1Run()
 { }
 
 //Primary particle and energy
-
-void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
+//
+void T1Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
 { 
   fParticle = particle;
   fEkin = energy;
 } 
 
 // set target
-
+//
 void T1Run::SetTargetXXX(G4bool flag)
-{ 
+{
   fTargetXXX = flag;
 }
  
 // Count number of processes
 
-void Run::CountProcesses(G4VProcess* process) 
+void T1Run::CountProcesses(G4VProcess* process) 
 {
   G4String procName = process->GetProcessName();
   std::map<G4String,G4int>::iterator it = fProcCounter.find(procName);
@@ -82,7 +82,7 @@ void T1Run::CountNuclearChannel(G4String name, G4double Q)
                   
 // Particle count
 
-void Run::ParticleCount(G4String name, G4double Ekin)
+void T1Run::ParticleCount(G4String name, G4double Ekin)
 {
   std::map<G4String, ParticleData>::iterator it = fParticleDataMap.find(name);
   if ( it == fParticleDataMap.end()) {
@@ -126,7 +126,7 @@ void T1Run::CountGamma(G4int nGamma)
 
 void T1Run::Merge(const G4Run* run)
 {
-  const T1Run* localRun = static_cast<const Run*>(run);
+  const T1Run* localRun = static_cast<const T1Run*>(run);
   
   //primary particle info
   //
@@ -215,11 +215,11 @@ void T1Run::EndOfRun(G4bool print)
   G4double density = material->GetDensity();
    
   G4String Particle = fParticle->GetParticleName();    
-  G4cout << "\n The run is " << numberOfEvent << " "<< Particle << " of "
-         << G4BestUnit(fEkin,"Energy") << " through " 
-         << G4BestUnit(fDetector->GetSize(),"Length") << " of "
-         << material->GetName() << " (density: " 
-         << G4BestUnit(density,"Volumic Mass") << ")" << G4endl;
+  // G4cout << "\n The run is " << numberOfEvent << " "<< Particle << " of "
+  //       << G4BestUnit(fEkin,"Energy") << " through " 
+  //       << G4BestUnit(fDetector->GetSize(),"Length") << " of "
+  //       << material->GetName() << " (density: " 
+  //       << G4BestUnit(density,"Volumic Mass") << ")" << G4endl;
 
   if (numberOfEvent == 0) { G4cout.precision(dfprec);   return;}
              
@@ -236,11 +236,11 @@ void T1Run::EndOfRun(G4bool print)
   }
   G4cout << G4endl;
       
-  if (survive > 0) {
-    G4cout << "\n Nb of incident particles surviving after "
-           << G4BestUnit(fDetector->GetSize(),"Length") << " of "
-           << material->GetName() << " : " << survive << G4endl;
-  }
+  //  if (survive > 0) {
+  //G4cout << "\n Nb of incident particles surviving after "
+  //       << G4BestUnit(fDetector->GetSize(),"Length") << " of "
+  //       << material->GetName() << " : " << survive << G4endl;
+  //}
   
   if (fTotalCount == 0) fTotalCount = 1;   //force printing anyway
   

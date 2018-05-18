@@ -24,8 +24,8 @@ T1SteppingAction::~T1SteppingAction()
 
 void T1SteppingAction::T1UserSteppingAction(const G4Step* aStep)
 {
- Run* run 
-   = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+ T1Run* run 
+   = static_cast<T1Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
          
   // count processes
   // 

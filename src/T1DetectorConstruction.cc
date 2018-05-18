@@ -34,6 +34,7 @@
 T1DetectorConstruction::T1DetectorConstruction()
   :G4VUserDetectorConstruction(),
    fScoringVolume(0)
+   //   fDetecor(0) // check this same as scoring volume??
 { }
 
 // Destructor

@@ -1,7 +1,7 @@
 //Header for T1Run.cc based on Hadr03
 //Patric Granholm 28.3.2018
 
-#ndef T1Run_h
+#ifndef T1Run_h
 #define T1Run_h 1
 
 #include "G4Run.hh"
@@ -9,7 +9,7 @@
 #include "globals.hh"
 #include <map> // what?
 
-class DetectorConstruction;
+class T1DetectorConstruction;
 class G4ParticleDefinition;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -17,7 +17,7 @@ class G4ParticleDefinition;
 class T1Run : public G4Run
 {
   public:
-    T1Run(DetectorConstruction*);
+    T1Run(T1DetectorConstruction* det);
    ~T1Run();
  public:
     void SetPrimary(G4ParticleDefinition* particle, G4double energy);
@@ -55,7 +55,7 @@ class T1Run : public G4Run
     };
          
   private:
-    DetectorConstruction* fDetector;
+    T1DetectorConstruction* fDetector;
     G4ParticleDefinition* fParticle;
     G4double              fEkin;
         

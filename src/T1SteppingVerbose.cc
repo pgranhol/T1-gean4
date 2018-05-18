@@ -5,7 +5,7 @@
 
 #include "G4SteppingManager.hh"
 #include "G4ParticleTypes.hh"
-#include "G4UnitsTabell.hh"
+#include "G4UnitsTable.hh"
 
 // Constructors and destructors
 

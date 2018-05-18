@@ -20,11 +20,12 @@ class T1DetectorConstruction : public G4VUserDetectorConstruction
     virtual G4VPhysicalVolume* Construct();
     G4LogicalVolume* GetScoringVolume() const {return fScoringVolume;}
     G4Material* GetMaterial() {return fMaterial;}
+
+private:
   
-  private:
-    G4Material* fMaterial;
+
   protected:
-    G4LogicalVolume* fScoringVolume; //fLBox in Hard03
+  G4LogicalVolume* fScoringVolume; //fLBox in Hard03
 };
 
 #endif

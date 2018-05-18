@@ -7,14 +7,22 @@
 
 #include "G4VUserActionInitialization.hh"
 
+class T1DetectorConstruction;
+class G4VSteppingVerbose;
+
 class T1ActionInitialization : public G4VUserActionInitialization
 {
   public:
-  T1ActionInitialization();
+  T1ActionInitialization(T1DetectorConstruction* detector);
   virtual ~T1ActionInitialization();
 
-  //  virtual void BuildForMaster() const;
+  virtual void BuildForMaster() const;
   virtual void Build() const;
+
+  virtual G4VSteppingVerbose* InitializeSteppingVerbose() const;
+   
+  private:
+    T1DetectorConstruction* fDetector;
 };
 
 #endif

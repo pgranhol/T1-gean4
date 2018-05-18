@@ -35,7 +35,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(geantT1 T1main.cc ${sources} ${headers})
+add_executable(geantT1 T1main2.cc ${sources} ${headers})
 target_link_libraries(geantT1 ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
@@ -44,13 +44,19 @@ target_link_libraries(geantT1 ${Geant4_LIBRARIES})
 # relies on these scripts being in the current working directory.
 #
 set(T1_SCRIPTS
-  init_vis.mac
+  debug.mac
   vis.mac
+  elastic.mac
+  gamma.mac
+  inelastic.mac
+  ion.mac
+  nCapture.mac
+  neutron.mac
+  nFission.mac
   )
 
 foreach(_script ${T1_SCRIPTS})
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/${_script}
+  configure_file(    ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
     COPYONLY
     )
