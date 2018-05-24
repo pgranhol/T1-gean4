@@ -17,7 +17,8 @@ class T1PhysicsList: public G4VModularPhysicsList
 {
 public:
   T1PhysicsList();
-  virtual ~T1PhysicsList();
+  ~T1PhysicsList();
+
 };
 
 #endif

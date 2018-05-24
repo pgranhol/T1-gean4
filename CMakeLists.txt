@@ -46,6 +46,7 @@ target_link_libraries(geantT1 ${Geant4_LIBRARIES})
 set(T1_SCRIPTS
   debug.mac
   vis.mac
+  vis2.mac
   elastic.mac
   gamma.mac
   inelastic.mac

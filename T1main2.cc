@@ -19,7 +19,7 @@
 #include "T1ActionInitialization.hh"
 #include "T1SteppingVerbose.hh"
 //#include "T1PrimaryGeneratorAction.hh"
-#include "T1PhysicsList.hh"
+//#include "T1PhysicsList.hh"
 #include "QGSP_BERT_HP.hh"
 
 int main(int argc, char** argv)
@@ -60,12 +60,12 @@ int main(int argc, char** argv)
   //runManager->SetUserInitialization(new T1PhysicsList());
 
   // Physics list
-  //  G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;
-  //  physicsList->SetVerboseLevel(1);
-  //  runManager->SetUserInitialization(physicsList);
+  G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;
+  physicsList->SetVerboseLevel(1);
+  runManager->SetUserInitialization(physicsList);
 
-  T1PhysicsList* phys = new T1PhysicsList;  
-  runManager->SetUserInitialization(phys);
+  //T1PhysicsList* phys = new T1PhysicsList;  
+  //  runManager->SetUserInitialization(phys);
   //runManager->SetUserInitialization(new T1ActionInitialization(det));
 
   //Action Initialization

@@ -149,7 +149,7 @@ void T1SteppingAction::T1UserSteppingAction(const G4Step* aStep)
               
   // kill event after first interaction
   //
-  G4RunManager::GetRunManager()->AbortEvent();  
+  //  G4RunManager::GetRunManager()->AbortEvent();  
 }
 
 

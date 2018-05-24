@@ -16,17 +16,20 @@
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 
-// Units
 
 #include "G4SystemOfUnits.hh"
 
 T1PhysicsList::T1PhysicsList()
 : G4VModularPhysicsList(){
 
-  SetDefaultCutValue(0.7*mm);
-  SetVerboseLevel(1);
+  G4int verb = 1;
 
-  RegisterPhysics(new G4HadronPhysicsQGSP_BIC_HP());
+  SetDefaultCutValue(0.7*mm);
+  SetVerboseLevel(verb);
+
+  RegisterPhysics(new G4HadronPhysicsQGSP_BERT_HP(verb));
 }
 
 T1PhysicsList::~T1PhysicsList(){}
+
+
