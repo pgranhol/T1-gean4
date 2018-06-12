@@ -21,6 +21,8 @@
 //#include "T1PrimaryGeneratorAction.hh"
 //#include "T1PhysicsList.hh"
 #include "QGSP_BERT_HP.hh"
+#include "QGSP_BIC_HP.hh"
+#include "Shielding.hh"
 
 int main(int argc, char** argv)
 {
@@ -60,7 +62,7 @@ int main(int argc, char** argv)
   //runManager->SetUserInitialization(new T1PhysicsList());
 
   // Physics list
-  G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;
+  G4VModularPhysicsList* physicsList = new QGSP_BIC_HP;
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
 

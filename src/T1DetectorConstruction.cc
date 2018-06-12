@@ -64,15 +64,16 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   //Elements and pure materials
   G4Material* Ag = nist->FindOrBuildMaterial("G4_Ag");
   G4Material* Ni = nist->FindOrBuildMaterial("G4_Ni");
-  //G4Material* Fe = nist->FindOrBuildMaterial("G4_Fe");
-  //G4Element* elN = nist->FindOrBuildElement("G4_N");
+  G4Material* He = nist->FindOrBuildMaterial("G4_He");
+  G4Element* elCr = nist->FindOrBuildElement("Cr");
+  G4Element* elMn = nist->FindOrBuildElement("Mn");
   G4Element* elC = nist->FindOrBuildElement("C");
   G4Element* elFe = nist->FindOrBuildElement("Fe");
   G4Element* elO = nist->FindOrBuildElement("O");
   G4Element* elSi = nist->FindOrBuildElement("Si");
   G4Element* elCa = nist->FindOrBuildElement("Ca");
   G4Element* elAl = nist->FindOrBuildElement("Al");
-  //G4Element* elS = nist->FindOrBuildElement("S");
+  //G4Element* elNi = nist->FindOrBuildElement("Ni");
   //G4Element* elBa = nist->FindOrBuildElement("Ba");
   G4Element* elEu = nist->FindOrBuildElement("Eu");
   G4Element* elNa = nist->FindOrBuildElement("Na");
@@ -96,11 +97,29 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
                                           kStateGas, temperature, pressure);
   G4vacuum->AddMaterial(Air, fractionmass=1.);
 
+  // Cooling He to be written pressure 10 - 20 kPa
+
+  // Steel Cr 17-20%, Mn 2%, Ni 7-10% Fe to balance, Goodfellow Cambridge Limited, AISI 321 FE210244
+  density = 7.96*g/cm3;
+  G4Material* Steel = new G4Material("Steel", density, nel = 4);
+  Steel -> AddElement(elCr, 18.5*perCent);
+  Steel -> AddElement(elMn, 2*perCent);
+  Steel -> AddMaterial(Ni, 8.5*perCent);
+  Steel -> AddElement(elFe, 71*perCent);
+
   // 18O Water
   density = 1.11*g/cm3;
   G4Material* O18Water = new G4Material("H2-18O", density, nel = 2);
   O18Water -> AddElement(elH, natoms = 2);
   O18Water -> AddElement(elOw, natoms = 1);
+
+  //180 test
+  //nsity = 1.1*g/cm3;
+  //pressure = 101325*pascal;
+  //mperature = 273.15*kelvin;
+  //Material* O18Vapor = new G4Material("18O", density, nel=2, kStateLiquid, temperature);
+  //8Vapor -> AddElement(elH, natoms=2);
+  //8Vapor -> AddElement(elOw, natoms = 1);
 
   //Salt
   density = 2.16*g/cm3;
@@ -144,7 +163,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4double magnetitWallx = 3.19*m;        // half of the wall width
   G4double magnetitWally = 2.10*m;        // half of the wall hight
   G4double magnetitWallz = 0.75*m;        // half of the wall thickness
-  G4double magnetitShieldingx = 1.25*m;    // half of the shielding width
+  G4double magnetitShieldingx = 1.25*m;   // half of the shielding width
   G4double magnetitShieldingy = 2.10*m;   // half of the shielding hight
   G4double magnetitShieldingz = 0.25*m;   // half of the shielding thickness
   G4double concreteWallx = 0.15*m;        // half of the wall width
@@ -157,7 +176,9 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4double targetLength = 1.41*mm;        // half length in Z of the water target (could be calculated here)
   G4double chamberLength = 1.66*mm;       // half length in Z of the target chamber 0.5 mm chamber back thickness
   G4double nickelfoilLength = 0.025*mm;   // half length in Z of the nickel foil
-  G4double beamlineLength = 0.5*m;        //half length of the beamline
+  G4double steelfoilLength = 0.0125*mm;   // half length in z of the steel foil
+  G4double heliumlength = 17.0*mm;        // half of the cooling helium
+  G4double beamlineLength = 0.5*m;        // half length of the beamline
   G4double startAngle = 0.*deg;           // full cylinder
   G4double spanningAngle = 360.*deg;      // full cylinder
 
@@ -345,7 +366,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 // Target chamber seal, nickel
   G4Tubs* solidTargetSeal = new G4Tubs("TargetSeal", innerRadius, outerRadius, nickelfoilLength, startAngle, spanningAngle); 
   G4LogicalVolume* logicTargetSeal = new G4LogicalVolume(solidTargetSeal,    // solid
-							 Ni,                 // material
+							 Ni      ,           // material Ni
 							 "TargetSeal",       // name
 							 0,                  // field manager
 							 0,                  // sensitive detector
@@ -360,6 +381,44 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 		    0,                                                   // copy number
 		    checkOverlaps);                                      // check for overlaps
                                                            
+// Helium cooling
+  G4Tubs* solidHeliumCooling = new G4Tubs("HeliumCooling", innerRadius, outerRadius, heliumlength, startAngle, spanningAngle);
+  G4LogicalVolume* logicHeliumCooling = new G4LogicalVolume(solidHeliumCooling,    // solid
+							    He,                    // material
+							    "HeliumCooling",       // name
+							    0,                     // field manager
+							    0,                     // sesitive detector
+							    0);                    // user limits
+
+  new G4PVPlacement(0,                                                     // rotation
+		    G4ThreeVector(0, 0, -19.21*mm),                       // translation
+		    logicHeliumCooling,                                    // logical volume
+		    "HeliumCooling",                                       // name
+		    logicBeamline,                                         // mother Volume
+		    false,                                                 // no boolean operator
+		    0,                                                     // copy number
+		    checkOverlaps);                                        // check for overlaps
+
+
+// Beam line cap, Steel
+  G4Tubs* solidBeamlineCap = new G4Tubs("BeamlineCap", innerRadius, outerRadius, steelfoilLength, startAngle, spanningAngle);
+  G4LogicalVolume* logicBeamlineCap = new G4LogicalVolume(solidBeamlineCap,    // solid
+							  Steel,               // material
+							  "BeamlineCap",       // name
+							  0,                   // field manager
+							  0,                   // sesitive detector
+							  0);                  // user limits
+
+  new G4PVPlacement(0,                                                   // rotation
+		    G4ThreeVector(0, 0, -36.735*mm),                     // translation
+		    logicBeamlineCap,                                    // logical volume
+		    "BeamlineCap",                                       // name
+		    logicBeamline,                                       // mother Volume
+		    false,                                               // no boolean operator
+		    0,                                                   // copy number
+		    checkOverlaps);                                      // check for overlaps
+
+
 // Water target H2 18-O
   G4Tubs* solidWaterTarget = new G4Tubs("WaterTarget", innerRadius, targetRadius, targetLength, startAngle, spanningAngle); 
   G4LogicalVolume* logicWaterTarget = new G4LogicalVolume(solidWaterTarget,   // solid

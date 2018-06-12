@@ -62,11 +62,15 @@
 #
 # Many other options are available with /vis/modeling and /vis/filtering.
 # For example, to select colour by particle ID:
-#/vis/modeling/trajectories/create/drawByParticleID
-#/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
 # To select or override default colours (note: e+ is blue by default):
-#/vis/modeling/trajectories/list
-#/vis/modeling/trajectories/drawByParticleID-0/set e+ yellow
+/vis/modeling/trajectories/list
+/vis/modeling/trajectories/drawByParticleID-0/set e green
+/vis/modeling/trajectories/drawByParticleID-0/set proton yellow
+/vis/modeling/trajectories/drawByParticleID-0/set neutron red
+/vis/modeling/trajectories/drawByParticleID-0/set gamma white
+/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
 #
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
@@ -105,15 +109,22 @@
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 false
 # "Envelope" is transparent blue to represent water
-/vis/geometry/set/colour Beamline 0 0 0 1 .3
-/vis/geometry/set/colour TargetChamber 0 0 1 0 .3
+/vis/geometry/set/colour WaterTarget 0 0 0 1 1
+/vis/geometry/set/visibility Beamline 0 false
+/vis/geometry/set/visibility HeliumCooling 0 false
+/vis/geometry/set/visibility TargetChamber 0 false
+#/vis/geometry/set/colour TargetChamber 0 0 1 0 .3
 #/vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 /vis/viewer/set/viewpointThetaPhi 120 150
+/vis/viewer/zoomTo 200 
+/vis/viewer/panTo -0.55 -1.315
 #
 # Re-establish auto refreshing and verbosity:
 /vis/viewer/set/autoRefresh true
 /vis/verbose warnings
 #
+#/vis/viewer/zoomTo 3000
+#/vis/viewer/panTo -0.55 -1.315
 # For file-based drivers, use this to create an empty detector view:
 #/vis/viewer/flush
