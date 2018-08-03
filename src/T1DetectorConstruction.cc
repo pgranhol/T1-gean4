@@ -34,6 +34,7 @@
 T1DetectorConstruction::T1DetectorConstruction()
   :G4VUserDetectorConstruction(),
    fScoringVolume(0)
+   //   fDetecor(0) // check this same as scoring volume??
 { }
 
 // Destructor
@@ -63,20 +64,23 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   //Elements and pure materials
   G4Material* Ag = nist->FindOrBuildMaterial("G4_Ag");
   G4Material* Ni = nist->FindOrBuildMaterial("G4_Ni");
-  //G4Material* Fe = nist->FindOrBuildMaterial("G4_Fe");
-  //G4Element* elN = nist->FindOrBuildElement("G4_N");
+  G4Material* He = nist->FindOrBuildMaterial("G4_He");
+  G4Element* elCr = nist->FindOrBuildElement("Cr");
+  G4Element* elMn = nist->FindOrBuildElement("Mn");
   G4Element* elC = nist->FindOrBuildElement("C");
   G4Element* elFe = nist->FindOrBuildElement("Fe");
   G4Element* elO = nist->FindOrBuildElement("O");
   G4Element* elSi = nist->FindOrBuildElement("Si");
   G4Element* elCa = nist->FindOrBuildElement("Ca");
   G4Element* elAl = nist->FindOrBuildElement("Al");
-  //G4Element* elS = nist->FindOrBuildElement("S");
-  //G4Element* elBa = nist->FindOrBuildElement("Ba");
+  G4Element* elN = nist->FindOrBuildElement("N");
+  G4Element* elS = nist->FindOrBuildElement("S");
   G4Element* elEu = nist->FindOrBuildElement("Eu");
   G4Element* elNa = nist->FindOrBuildElement("Na");
   G4Element* elCl = nist->FindOrBuildElement("Cl");
   G4Element* elH = nist->FindOrBuildElement("H");
+  G4Element* elV = nist->FindOrBuildElement("V");
+  G4Element* elMg = nist->FindOrBuildElement("Mg");
 
   G4Element* elOw = new G4Element("18Oxygen", "18O", ncomponents=3);
   elOw->AddIsotope(O18, abudance = 98.3*perCent);
@@ -95,11 +99,34 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
                                           kStateGas, temperature, pressure);
   G4vacuum->AddMaterial(Air, fractionmass=1.);
 
+  // Cooling He to be written pressure 10 - 20 kPa
+  pressure = 2.0e4*pascal;                         //applied preasure
+  tempearture = 273.15*kelvin;                     //STP temperature, easily changed to 22*celcius
+  density = 35.25*g/m3;	                           //pV=nRT and n=m/M => density m/V=pM/RT
+  G4Material*G4helium= new G4Material(name="G4helium",density, ne1=1, kStateGas, temperature, pressure);
+
+	
+  // Steel Cr 17-20%, Mn 2%, Ni 7-10% Fe to balance, Goodfellow Cambridge Limited, AISI 321 FE210244
+  density = 7.96*g/cm3;
+  G4Material* Steel = new G4Material("Steel", density, nel = 4);
+  Steel -> AddElement(elCr, 18.5*perCent);
+  Steel -> AddElement(elMn, 2*perCent);
+  Steel -> AddMaterial(Ni, 8.5*perCent);
+  Steel -> AddElement(elFe, 71*perCent);
+
   // 18O Water
   density = 1.11*g/cm3;
   G4Material* O18Water = new G4Material("H2-18O", density, nel = 2);
   O18Water -> AddElement(elH, natoms = 2);
   O18Water -> AddElement(elOw, natoms = 1);
+
+  //180 test
+  //nsity = 1.1*g/cm3;
+  //pressure = 101325*pascal;
+  //mperature = 273.15*kelvin;
+  //Material* O18Vapor = new G4Material("18O", density, nel=2, kStateLiquid, temperature);
+  //8Vapor -> AddElement(elH, natoms=2);
+  //8Vapor -> AddElement(elOw, natoms = 1);
 
   //Salt
   density = 2.16*g/cm3;
@@ -137,18 +164,51 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   MagnetitConcrete -> AddMaterial(Concrete, 12.07*perCent);
 
 
+  // Bitumen http://rahabitumen.com/bitumen-components/
+
+  density = 1.03*g/cm3;
+  G4Material* Bitumen = new G4Material("Bitumen", density, nel = 12);
+  Bitumen -> AddElement(elC, 84*perCent);
+  Bitumen -> AddElement(elH, 9.8469*perCent);
+  Bitumen -> AddElement(elN, 1.0*perCent);
+  Bitumen -> AddElement(elS, 4*perCent);
+  Bitumen -> AddElement(elO, 1.0*perCent);
+  Bitumen -> AddMaterial(Ni, 0.01*perCent);
+  Bitumen -> AddElement(elV, 0.1*perCent);
+  Bitumen -> AddElement(elFe, 0.01*perCent);
+  Bitumen -> AddElement(elMn, 0.0001*perCent);
+  Bitumen -> AddElement(elCa, 0.02*perCent);
+  Bitumen -> AddElement(elMg, 0.007*perCent);
+  Bitumen -> AddElement(elNa, 0.007*perCent);
+
 
   // variables
   G4double worldXYZ = 4.0*m;              // half of the world size
   G4double magnetitWallx = 3.19*m;        // half of the wall width
   G4double magnetitWally = 2.10*m;        // half of the wall hight
   G4double magnetitWallz = 0.75*m;        // half of the wall thickness
-  G4double magnetitShieldingx = 1.25*m;    // half of the shielding width
-  G4double magnetitShieldingy = 2.10*m;   // half of the shielding hight
-  G4double magnetitShieldingz = 0.25*m;   // half of the shielding thickness
+  G4double magnetitShieldingx = 1.25*m;   // half of the shielding width
+  G4double magnetitShieldingy = 1.25*m;   // half of the shielding hight
+  G4double magnetitShieldingz = 0.30*m;   // half of the shielding thickness
+  G4double innerConcretex = 1.75*m;       // half of the inner root concrete width
+  G4double innerConcretey = 16*cm;        // half of the inner roof concrete hight
+  G4double innerConcretez = 1.25*m;       // half of the inner roof concrete thickness
+  G4double innerBitumenx = 2.10*m;        // half of the inner roof bitumen width
+  G4double innerBitumeny = 29.5*cm;       // half of the inner roof bitumen hight
+  G4double innerBitumenz = 1.65*m;        // half of the inner roof bitumen length
+  G4double innerMagnetitx = 1.55*m;       // half of the inner roof magnetit width
+  G4double innerMagnetity = 12.0*cm;      // half of the inner roof magnetit hight
+  G4double innerMagnetitz = 0.48*m;       // half of the inner roof magnetit lenght 
+  G4double waterShieldingx = 0.15*m;      // half of the water shielding width
+  G4double waterShieldingy = 1.05*m;      // half of the water shielding width
+  G4double waterShieldingz1 = 0.70*m;     // half of the water shielding hight
+  G4double waterShieldingz2 = 0.53*m;     // half of the water shielding hight
   G4double concreteWallx = 0.15*m;        // half of the wall width
-  G4double concreteWally = 2.10*m;        // half of the wall hight
+  G4double concreteWally = 2.20*m;        // half of the wall hight
   G4double concreteWallz = 3.75*m;        // half of the wall thickness
+  G4double concreteFloorx = 3.5*m;        // half of the wall width
+  G4double concreteFloory = 0.25*m;        // half of the wall hight
+  G4double concreteFloorz = 3.75*m;        // half of the wall thickness
   G4double innerRadius = 0.00*mm;         // tubs inner radius
   G4double targetRadius = 9.50*mm;        // radius of the water target
   G4double outerRadius = 10.00*mm;        // outer radius of the target chamber
@@ -156,7 +216,9 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4double targetLength = 1.41*mm;        // half length in Z of the water target (could be calculated here)
   G4double chamberLength = 1.66*mm;       // half length in Z of the target chamber 0.5 mm chamber back thickness
   G4double nickelfoilLength = 0.025*mm;   // half length in Z of the nickel foil
-  G4double beamlineLength = 0.5*m;        //half length of the beamline
+  G4double steelfoilLength = 0.0125*mm;   // half length in z of the steel foil
+  G4double heliumlength = 17.0*mm;        // half of the cooling helium
+  G4double beamlineLength = 0.5*m;        // half length of the beamline
   G4double startAngle = 0.*deg;           // full cylinder
   G4double spanningAngle = 360.*deg;      // full cylinder
 
@@ -212,6 +274,32 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 		    2,                            // copy number
 		    checkOverlaps);               // check for overlaps
 
+ // Concrete floor and roof
+  G4Box* solidConcreteFloor = new G4Box("ConcreteFloor",concreteFloorx, concreteFloory, concreteFloorz);
+  G4LogicalVolume* logicConcreteFloor = new G4LogicalVolume(solidConcreteFloor,    //solid
+							   Concrete,             // materia change!!
+							   "ConcreteFloor",       // name
+							   0,                    // field manager
+							   0,                    // sensitive detector
+							   0);                   // user limits
+
+  new G4PVPlacement(0,                            // rotation
+		    G4ThreeVector(0, 2.40*m, 0), // translation
+		    logicConcreteFloor,            // logic volume
+		    "ConcreteRoofLv1",            // name
+		    logicWorld,                   // mother volume
+		    false,                        // boolean operator
+		    1,                            // copy number
+		    checkOverlaps);               // check for overlaps
+
+ new G4PVPlacement(0,                             // rotation
+		   G4ThreeVector(0, -2.40*m, 0),   // translation
+		    logicConcreteFloor,            // logic volume
+		    "ConcreteFloorLv1",            // name
+		    logicWorld,                   // mother volume
+		    false,                        // boolean operator
+		    2,                            // copy number
+		    checkOverlaps);               // check for overlaps
 
   // Magnetit wall to cyclotron 
   G4Box* solidMagnetitWall = new G4Box("MagnetitWall", magnetitWallx, magnetitWally, magnetitWallz);
@@ -241,26 +329,81 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 							 0,                             // sensitive detektor
 							 0);                            // user limits
  
-  new G4PVPlacement(0,                                  // rotation
-		    G4ThreeVector(-0.35*m, 0, 1.55*m),  // translation
-		    logicMagnetitShielding,             // logic volume
-		    "MagnetitShielding1",               // name
-		    logicWorld,                         // mother volume
-                    false,                              // boolean operator
-		    1,                                  // copy number
-		    checkOverlaps);                     // check for overlaps
+  new G4PVPlacement(0,                                      // rotation
+		    G4ThreeVector(-0.35*m, -85*cm, 1.55*m),  // translation
+		    logicMagnetitShielding,                 // logic volume
+		    "MagnetitShielding1",                   // name
+		    logicWorld,                             // mother volume
+                    false,                                  // boolean operator
+		    1,                                      // copy number
+		    checkOverlaps);                         // check for overlaps
 
-  new G4PVPlacement(0,                                  // rotation
-		    G4ThreeVector(-1.95*m, 0, 2.9*m),    // translation
-		    logicMagnetitShielding,             // logic volume
-		    "MagnetitShielding2",               // name
-		    logicWorld,                         // mother volume
-                    false,                              // boolean operator
-		    2,                                  // copy number
-		    checkOverlaps);                     // check for overlaps
+  new G4PVPlacement(0,                                       // rotation
+		    G4ThreeVector(-1.95*m, -85*cm, 2.9*m),    // translation
+		    logicMagnetitShielding,                  // logic volume
+		    "MagnetitShielding2",                    // name
+		    logicWorld,                              // mother volume
+                    false,                                   // boolean operator
+		    2,                                       // copy number
+		    checkOverlaps);                          // check for overlaps
+
+  // Inner roof concrete
+  G4Box* solidInnerConcrete = new G4Box("InnerConcrete", innerConcretex, innerConcretey, innerConcretez);
+  G4LogicalVolume* logicInnerConcrete = new G4LogicalVolume(solidInnerConcrete,      // solid
+							  Concrete,                // material
+							  "InnerConcerte",         // name
+							  0,                       // field manager
+							  0,                       // sensitive detector
+							  0);                      // user limits
+
+  new G4PVPlacement(0,                                       // rotation
+		    G4ThreeVector(-1.50*m, 80*cm, -0.9*m),   // translation
+		    logicInnerConcrete,                      // logic volume
+		    "InnerConcrete",                         // name
+		    logicWorld,                              // mother volume
+                    false,                                   // boolean operator
+		    0,                                       // copy number
+		    checkOverlaps);                          // check for overlaps
+  
+
+// Inner roof bitumen under the concrete
+  G4Box* solidInnerBitumen = new G4Box("innerBitumen", innerBitumenx, innerBitumeny, innerBitumenz);
+  G4LogicalVolume* logicInnerBitumen = new G4LogicalVolume(solidInnerBitumen,      // solid
+							  Concrete,                // material
+							  "InnerBitumen",          // name
+							  0,                       // field manager
+							  0,                       // sensitive detector
+							  0);                      // user limits
+
+  new G4PVPlacement(0,                                          // rotation
+		    G4ThreeVector(-1.1*m, 32*cm, -0.45*m),      // translation
+		    logicInnerBitumen,                          // logic volume
+		    "InnerBitumen",                             // name
+		    logicWorld,                                 // mother volume
+                    false,                                      // boolean operator
+		    0,                                          // copy number
+		    checkOverlaps);                             // check for overlaps
+
+ // Inner roof magnetit
+  G4VSolid* solidInnerMagnetit = new G4Box("innerMagnetit", innerMagnetitx, innerMagnetity, innerMagnetitz);
+  G4LogicalVolume* logicInnerMagnetit = new G4LogicalVolume(solidInnerMagnetit,    // solid
+							  MagnetitConcrete,        // material
+							  "InnerMagnetit",         // name
+							  0,                       // field manager
+							  0,                       // sensitive detector
+							  0);                      // user limits
+
+  new G4PVPlacement(0,                                          // rotation
+		    G4ThreeVector(-50*cm, -15*cm, -1.15*m),     // translation
+		    logicInnerMagnetit,                         // logic volume
+		    "InnerMagnetit",                            // name
+		    logicInnerBitumen,                          // mother volume
+                    false,                                      // boolean operator
+		    0,                                          // copy number
+		    checkOverlaps);                             // check for overlaps
 
   // Water shielding 1  
-  G4Box* solidWaterShielding1 = new G4Box("WaterShielding1", 0.15*m, magnetitShieldingy, 0.70*m);
+  G4Box* solidWaterShielding1 = new G4Box("WaterShielding1", waterShieldingx, waterShieldingy, waterShieldingz1);
   G4LogicalVolume* logicWaterShielding1 = new G4LogicalVolume(solidWaterShielding1, //solid
 							      water,                // material
 							      "WaterShieldingLv1",  // name
@@ -268,7 +411,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 							      0,                    // sensitive detector
                                                               0);                   // user limits
   
-  position = G4ThreeVector(-0.70*m, 0, -1.24*m);
+  position = G4ThreeVector(-0.70*m, -1.05*m, -1.24*m);
   G4RotationMatrix rotm1 = G4RotationMatrix();
   rotm1.rotateY(-20*deg);
   transform = G4Transform3D(rotm1,position);
@@ -281,7 +424,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 		    checkOverlaps);         // check for overlaps
   
 // Water shielding 2  
-  G4Box* solidWaterShielding2 = new G4Box("WaterShielding1", 0.15*m, magnetitShieldingy, 0.53*m);
+  G4Box* solidWaterShielding2 = new G4Box("WaterShielding2", waterShieldingx, waterShieldingy, waterShieldingz2);
   G4LogicalVolume* logicWaterShielding2 = new G4LogicalVolume(solidWaterShielding2, //solid
 							      water,                // material
 							      "WaterShieldingLv2",  // name
@@ -289,7 +432,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 							      0,                    // sensitive detector
                                                               0);                   // user limits
   G4RotationMatrix rotm2 = G4RotationMatrix();
-  position = G4ThreeVector(-1.25*m, 0, -0.25*m);
+  position = G4ThreeVector(-1.25*m, -1.05*m, -0.25*m);
   rotm2.rotateY(-76*deg);
   transform = G4Transform3D(rotm2,position);
   new G4PVPlacement(transform,              // rotatio + translation
@@ -344,7 +487,7 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 // Target chamber seal, nickel
   G4Tubs* solidTargetSeal = new G4Tubs("TargetSeal", innerRadius, outerRadius, nickelfoilLength, startAngle, spanningAngle); 
   G4LogicalVolume* logicTargetSeal = new G4LogicalVolume(solidTargetSeal,    // solid
-							 Ni,                 // material
+							 Ni      ,           // material Ni
 							 "TargetSeal",       // name
 							 0,                  // field manager
 							 0,                  // sensitive detector
@@ -359,6 +502,44 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
 		    0,                                                   // copy number
 		    checkOverlaps);                                      // check for overlaps
                                                            
+// Helium cooling
+  G4Tubs* solidHeliumCooling = new G4Tubs("HeliumCooling", innerRadius, outerRadius, heliumlength, startAngle, spanningAngle);
+  G4LogicalVolume* logicHeliumCooling = new G4LogicalVolume(solidHeliumCooling,    // solid
+							    He,                    // material
+							    "HeliumCooling",       // name
+							    0,                     // field manager
+							    0,                     // sesitive detector
+							    0);                    // user limits
+
+  new G4PVPlacement(0,                                                     // rotation
+		    G4ThreeVector(0, 0, -19.21*mm),                       // translation
+		    logicHeliumCooling,                                    // logical volume
+		    "HeliumCooling",                                       // name
+		    logicBeamline,                                         // mother Volume
+		    false,                                                 // no boolean operator
+		    0,                                                     // copy number
+		    checkOverlaps);                                        // check for overlaps
+
+
+// Beam line cap, Steel
+  G4Tubs* solidBeamlineCap = new G4Tubs("BeamlineCap", innerRadius, outerRadius, steelfoilLength, startAngle, spanningAngle);
+  G4LogicalVolume* logicBeamlineCap = new G4LogicalVolume(solidBeamlineCap,    // solid
+							  Steel,               // material
+							  "BeamlineCap",       // name
+							  0,                   // field manager
+							  0,                   // sesitive detector
+							  0);                  // user limits
+
+  new G4PVPlacement(0,                                                   // rotation
+		    G4ThreeVector(0, 0, -36.735*mm),                     // translation
+		    logicBeamlineCap,                                    // logical volume
+		    "BeamlineCap",                                       // name
+		    logicBeamline,                                       // mother Volume
+		    false,                                               // no boolean operator
+		    0,                                                   // copy number
+		    checkOverlaps);                                      // check for overlaps
+
+
 // Water target H2 18-O
   G4Tubs* solidWaterTarget = new G4Tubs("WaterTarget", innerRadius, targetRadius, targetLength, startAngle, spanningAngle); 
   G4LogicalVolume* logicWaterTarget = new G4LogicalVolume(solidWaterTarget,   // solid
