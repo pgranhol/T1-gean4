@@ -100,7 +100,12 @@ G4VPhysicalVolume* T1DetectorConstruction::Construct()
   G4vacuum->AddMaterial(Air, fractionmass=1.);
 
   // Cooling He to be written pressure 10 - 20 kPa
+  //  pressure = 2.0e4*pascal;                         //applied preasure
+  //  temperature = 273.15*kelvin;                     //STP temperature, easily changed to 22*celcius
+  //  density = 35.25*g/m3;	                           //pV=nRT and n=m/M => density m/V=pM/RT
+  //  G4Material*G4helium= new G4Material(name="G4helium",density, nel=1, kStateGas, temperature, pressure);
 
+	
   // Steel Cr 17-20%, Mn 2%, Ni 7-10% Fe to balance, Goodfellow Cambridge Limited, AISI 321 FE210244
   density = 7.96*g/cm3;
   G4Material* Steel = new G4Material("Steel", density, nel = 4);

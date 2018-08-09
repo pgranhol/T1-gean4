@@ -4,8 +4,8 @@
 #include "T1RunAction.hh"
 #include "T1PrimaryGeneratorAction.hh"
 #include "T1DetectorConstruction.hh"
-#include "T1Run.hh" // to be written
-#include "T1RunMessenger.hh" // to be written
+#include "T1Run.hh" 
+#include "T1RunMessenger.hh" 
 #include "T1HistoManager.hh"
 
 #include "G4RunManager.hh"
@@ -30,6 +30,7 @@ T1RunAction::~T1RunAction()
 
 G4Run* T1RunAction::GenerateRun()
 {
+  // det = GetScoringVolume();
   fRun = new T1Run(fDetector);
   return fRun;
 }
